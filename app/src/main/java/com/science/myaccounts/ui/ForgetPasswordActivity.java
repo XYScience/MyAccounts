@@ -2,7 +2,6 @@ package com.science.myaccounts.ui;
 
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,8 +25,6 @@ import com.science.myaccounts.utils.SnackbarUtils;
  */
 public class ForgetPasswordActivity extends BaseActivity implements View.OnClickListener {
 
-    private Toolbar mToolbar;
-    private View mViewToolbarShadow;
     private MaterialEditText mEditEmail;
     private Button mBtnSend;
     private CoordinatorLayout mCoordinatorLayout;
@@ -42,9 +39,7 @@ public class ForgetPasswordActivity extends BaseActivity implements View.OnClick
     public void initView() {
         setContentView(R.layout.activity_forget_password);
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mViewToolbarShadow = findViewById(R.id.toolbar_shadow);
-        setToolbar(mToolbar, "找回密码", mViewToolbarShadow);
+        setToolbar("找回密码");
 
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         mEditEmail = (MaterialEditText) findViewById(R.id.email);

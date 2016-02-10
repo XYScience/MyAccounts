@@ -1,6 +1,5 @@
 package com.science.myaccounts.utils;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -18,13 +17,12 @@ import android.view.ViewGroup;
  */
 public class StatusBarCompat {
     private static final int INVALID_VAL = -1;
-    private static final int COLOR_DEFAULT = Color.parseColor("#20000000");
+    private static final int COLOR_DEFAULT = Color.parseColor("#22000000");
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static void compat(Activity activity, int statusColor) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            activity.getWindow().setStatusBarColor(COLOR_DEFAULT);
+//            activity.getWindow().setStatusBarColor(activity.getResources().getColor(R.color.colorPrimaryDark));
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -32,12 +30,11 @@ public class StatusBarCompat {
             ViewGroup contentView = (ViewGroup) activity.findViewById(android.R.id.content);
             if (statusColor != INVALID_VAL) {
                 color = statusColor;
-            } 
-			
-			View statusBarView = contentView.getChildAt(0);
+            }
+
+            View statusBarView = contentView.getChildAt(0);
             //改变颜色时避免重复添加statusBarView
-            if (statusBarView != null && statusBarView.getMeasuredHeight() == getStatusBarHeight(activity))
-            {
+            if (statusBarView != null && statusBarView.getMeasuredHeight() == getStatusBarHeight(activity)) {
                 statusBarView.setBackgroundColor(color);
                 return;
             }

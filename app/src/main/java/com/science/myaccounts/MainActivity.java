@@ -4,21 +4,26 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.avos.avoscloud.AVAnalytics;
 import com.avos.avoscloud.AVUser;
+import com.science.myaccounts.adapter.MenuPagerAdapter;
 import com.science.myaccounts.fragment.CollectFragment;
-import com.science.myaccounts.fragment.CommunicationFragment;
 import com.science.myaccounts.fragment.DiscoverFragment;
 import com.science.myaccounts.fragment.FocusFragment;
 import com.science.myaccounts.interfaces.OnGetAvatarListener;
@@ -28,18 +33,25 @@ import com.science.myaccounts.utils.AVOSNetUtils;
 import com.science.myaccounts.utils.GlideUtils;
 import com.science.myaccounts.utils.ToastUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnGetAvatarListener {
 
     private Toolbar mToolbar;
-    private View mViewToolbarShadow;
     private DrawerLayout mDrawerLayout;
     private View mHeaderView;
     private CircleImageView mImgUser;
     private TextView mTextSignature;
     private AVOSNetUtils mAVOSNetUtils;
+    private TabLayout mTabMenu;
+    private ViewPager mViewPagerMenu;
+    private FloatingActionButton mFabButton;
+    private String[] mTitles; // TabLayout中的tab标题
+    private List<Fragment> mFragments; // 填充到ViewPager中的Fragment
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,25 +63,83 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
         AVAnalytics.trackAppOpened(getIntent());// 跟踪统计应用的打开情况
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mViewToolbarShadow = findViewById(R.id.toolbar_shadow);
-        setToolbar(mToolbar, "美食笔记", mViewToolbarShadow);
+        mToolbar = setToolbar("MyAccounts");
 
         mAVOSNetUtils = AVOSNetUtils.getInstance();
         mAVOSNetUtils.setOnGetAvatarListener(this);
 
         initDrawerLayout();
         initNavigationView();
+        initFab();
     }
 
     @Override
     public void initData() {
         setUpUser();
-        switchToDiscover();
+        mTitles = getResources().getStringArray(R.array.tab_titles_main);
+        mFragments = new ArrayList<>();
+        DiscoverFragment fragmentDiscover = new DiscoverFragment();
+        mFragments.add(0, fragmentDiscover);
+        FocusFragment fragmentFocus = new FocusFragment();
+        mFragments.add(1, fragmentFocus);
+        CollectFragment fragmentCollect = new CollectFragment();
+        mFragments.add(2, fragmentCollect);
+        initViewPager();
+    }
+
+    private void initViewPager() {
+        mTabMenu = (TabLayout) findViewById(R.id.tab_layout);
+        mViewPagerMenu = (ViewPager) findViewById(R.id.view_pager);
+        MenuPagerAdapter pagerAdapter = new MenuPagerAdapter(getSupportFragmentManager(), mTitles, mFragments);
+        mViewPagerMenu.setAdapter(pagerAdapter);
+        mViewPagerMenu.setOffscreenPageLimit(3);
+        mTabMenu.setupWithViewPager(mViewPagerMenu);
+        mTabMenu.setTabsFromPagerAdapter(pagerAdapter); // 设置Tablayout的Tab显示ViewPager的适配器中的getPageTitle函数获取到的标题
+    }
+
+    private void initFab() {
+        mFabButton = (FloatingActionButton) findViewById(R.id.fab);
     }
 
     @Override
     public void initListener() {
+        mViewPagerMenu.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position) {
+                    case 0:
+                        startAlphaAnimation(mFabButton, 200, View.VISIBLE);
+                        break;
+                    case 1:
+                        startAlphaAnimation(mFabButton, 200, View.INVISIBLE);
+                        break;
+                    case 2:
+                        startAlphaAnimation(mFabButton, 200, View.VISIBLE);
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+    }
+
+    // 设置渐变的动画
+    public void startAlphaAnimation(View v, long duration, int visibility) {
+        AlphaAnimation alphaAnimation = (visibility == View.VISIBLE)
+                ? new AlphaAnimation(0f, 1f)
+                : new AlphaAnimation(1f, 0f);
+
+        alphaAnimation.setDuration(duration);
+        alphaAnimation.setFillAfter(true);
+        v.startAnimation(alphaAnimation);
     }
 
     private void initDrawerLayout() {
@@ -102,26 +172,6 @@ public class MainActivity extends BaseActivity
             }
         });
         mAVOSNetUtils.getUserAvatar(AVUser.getCurrentUser().getUsername());
-    }
-
-    private void switchToDiscover() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.content, new DiscoverFragment()).commit();
-        mToolbar.setTitle("发现");
-    }
-
-    private void switchToFocus() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.content, new FocusFragment()).commit();
-        mToolbar.setTitle("关注");
-    }
-
-    private void switchToCollect() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.content, new CollectFragment()).commit();
-        mToolbar.setTitle("收藏");
-    }
-
-    private void switchToCommunication() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.content, new CommunicationFragment()).commit();
-        mToolbar.setTitle("交流");
     }
 
     @Override
@@ -163,6 +213,7 @@ public class MainActivity extends BaseActivity
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -191,13 +242,13 @@ public class MainActivity extends BaseActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_discover) {
-            switchToDiscover();
+//            switchToDiscover();
         } else if (id == R.id.nav_collect) {
-            switchToCollect();
+//            switchToCollect();
         } else if (id == R.id.nav_focus) {
-            switchToFocus();
+//            switchToFocus();
         } else if (id == R.id.nav_communication) {
-            switchToCommunication();
+//            switchToCommunication();
         } else if (id == R.id.nav_settings) {
             Toast.makeText(this, "nav_settings", Toast.LENGTH_LONG).show();
         } else if (id == R.id.nav_about) {

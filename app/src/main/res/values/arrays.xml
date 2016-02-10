@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="tab_titles_main">
+        <item>账单</item>
+        <item>收藏</item>
+        <item>计划</item>
+    </string-array>
+</resources>

@@ -1,9 +1,7 @@
 package com.science.myaccounts.ui;
 
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.science.myaccounts.R;
 
@@ -17,9 +15,6 @@ import com.science.myaccounts.R;
  */
 public class AlterInformationActivity extends BaseActivity {
 
-    private Toolbar mToolbar;
-    private View mViewToolbarShadow;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,9 +25,7 @@ public class AlterInformationActivity extends BaseActivity {
     public void initView() {
         setContentView(R.layout.activity_alter_information);
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mViewToolbarShadow = findViewById(R.id.toolbar_shadow);
-        setToolbar(mToolbar, "修改资料", mViewToolbarShadow);
+        setToolbar("修改资料");
     }
 
     @Override

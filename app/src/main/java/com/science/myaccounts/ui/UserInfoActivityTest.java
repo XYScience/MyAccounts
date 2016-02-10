@@ -25,7 +25,7 @@ import com.science.myaccounts.utils.ImageUtils;
  * @email chentushen.science@gmail.com,274240671@qq.com
  * @data 2015/9/24
  */
-public class UserInfoActivity extends BaseActivity {
+public class UserInfoActivityTest extends BaseActivity {
 
     private AppBarLayout mAppBarLayout;
 
@@ -137,7 +137,7 @@ public class UserInfoActivity extends BaseActivity {
                 break;
 
             case R.id.alter_information:
-                Intent intent = new Intent(UserInfoActivity.this, AlterInformationActivity.class);
+                Intent intent = new Intent(UserInfoActivityTest.this, AlterInformationActivity.class);
                 startActivity(intent);
                 break;
         }

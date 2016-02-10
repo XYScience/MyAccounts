@@ -7,7 +7,7 @@
     <color name="textPrimary">#212121</color>
     <color name="textSecondary">#727272</color>
     <color name="colorDivider">#B6B6B6</color>
-    <color name="windowBackground">#F6F4F5</color>
+    <color name="windowBackground">#EEEEEE</color>
     <color name="textColor">#FFFFFF</color>
 
     <!-- swipeRefresh color -->
